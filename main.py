@@ -30,34 +30,36 @@ def AIP(money=1000, history=[]):
     capital = 0 + money 
     position = 0 + money
     len_history = len(history)
+    max_capital = 0
     for i in range(len_history,0,-1):
         if i != len_history:
             if is_next_month(history[i-1][0],history[i][0]):
                 count += 1
                 capital += money
                 position += money
-            # if position/capital >= 1.1:
-            #     a += 1
-            #     position /= 2
-            #     capital /= 2
-            #     chg_money += position - capital
-            #     if max_capital < capital:
-            #         max_capital = capital
-            #     print(history[i][0],position,capital,chg_money,max_capital)
-            
-            # if position/capital <= 0.9:
-            #     b  += 1
-            #     capital += position 
-            #     position *= 2
-            #     if max_capital < capital:
-            #         max_capital = capital
-            #     print(history[i][0],position,capital,chg_money,max_capital)
-            position += position*str2percent(history[i][4])
             chg = position/capital
-            chg_money = position - capital
-            if chg > 1.3:
-                print( count, chg,chg_money,capital,position,history[i][0])
-    return count, chg,chg_money,capital,position
+            if chg >= 1.1 and position>money:
+                a += 1
+                position /= 2
+                capital /= 2
+                chg_money += position - capital
+                if max_capital < capital:
+                    max_capital = capital
+                print("a:",history[i][0],position,capital,chg_money,max_capital)
+            
+            if chg <= 0.85:
+                b  += 1
+                capital += position 
+                position *= 2
+                if max_capital < capital:
+                    max_capital = capital
+                print("b:",history[i][0],position,capital,chg_money,max_capital)
+            position += position*str2percent(history[i][4])
+            # chg = position/capital
+            # chg_money = position - capital
+            # if chg > 1.3:
+            #     print( count, chg,chg_money,capital,position,history[i][0])
+    return count, chg,chg_money,capital,position,a,b,max_capital
 
 def is_next_month(istr,jstr):
     iobj = datetime.datetime.strptime(istr, "%Y-%m-%d").date()
@@ -72,7 +74,7 @@ def str2percent(str):
     return float(str.strip('%'))/100.00
 
 if __name__ == '__main__':
-    history = get_shares_history(start="20050101")
+    history = get_shares_history(start="20120101")
     print(AIP(history = history[0]["hq"]))
 
 
